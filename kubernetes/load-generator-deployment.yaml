@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: load-generator-app1
+  namespace: load-generator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: load-generator-app1
+  template:
+    metadata:
+      labels:
+        app: load-generator-app1
+    spec:
+      restartPolicy: Always
+      containers:
+      - name: load-generator-app1
+        image: munjo185/load-generator-app1:latest
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+        ports:
+        - containerPort: 80
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 10
